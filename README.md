@@ -199,13 +199,3 @@ docker run -d -p 8000:8000 --name mental-health-app mental-health-signal
 Access the app at `http://localhost:8000`.
 
 ---
-
-## 📜 License
-
-This project is open-source and available under the [MIT License](LICENSE).
-
----
-
-<p align="center">
-  <i>Built for educational and informational analytics — not intended for clinical diagnosis.</i>
-</p>
