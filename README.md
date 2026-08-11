@@ -5,8 +5,11 @@
 [![Scikit-Learn](https://img.shields.io/badge/scikit--learn-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white)](https://scikit-learn.org/)
 [![Docker](https://img.shields.io/badge/Docker-Enabled-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
+[![Live Demo](https://img.shields.io/badge/🚀%20Live%20Demo-Render-46E3B7.svg?style=for-the-badge)](https://mental-health-score-new.onrender.com)
 
-**Mental Health Signal** is an end-to-end Machine Learning web application that predicts and analyzes student mental health scores based on daily digital habits, screen time, phone unlocks, sleep patterns, study hours, physical activity, and perceived stress levels. 
+**Mental Health Signal** is an end-to-end Machine Learning web application that predicts and analyzes student mental health scores based on daily digital habits, screen time, phone unlocks, sleep patterns, study hours, physical activity, and perceived stress levels.
+
+> 🌐 **Live App**: [https://mental-health-score-new.onrender.com](https://mental-health-score-new.onrender.com)
 
 ---
 
@@ -93,7 +96,7 @@ The model pipeline translates student lifestyle data into a continuous mental he
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/your-username/Mental-Health-Score.git
+git clone https://github.com/vikashg450/Mental-Health-Score.git
 cd Mental-Health-Score
 ```
 
@@ -131,6 +134,11 @@ Navigate to `http://localhost:8000` in your web browser.
 
 FastAPI provides automatic interactive API documentation via Swagger UI.
 
+**🌐 Live (Deployed):**
+- **Swagger Docs**: [https://mental-health-score-new.onrender.com/docs](https://mental-health-score-new.onrender.com/docs)
+- **ReDoc**: [https://mental-health-score-new.onrender.com/redoc](https://mental-health-score-new.onrender.com/redoc)
+
+**💻 Local:**
 - **Swagger Docs**: [http://localhost:8000/docs](http://localhost:8000/docs)
 - **ReDoc**: [http://localhost:8000/redoc](http://localhost:8000/redoc)
 
