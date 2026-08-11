@@ -1,0 +1,96 @@
+import os
+import warnings
+import joblib
+import pandas as pd
+from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+from pydantic import BaseModel, Field
+from typing import Literal
+from fastapi.middleware.cors import CORSMiddleware
+
+warnings.filterwarnings('ignore', category=UserWarning)
+
+model = joblib.load('Mental_Health_Model.pkl')
+top_countries = ['Other', 'India', 'USA', 'Canada', 'Australia', 'UK', 'Germany', 'Mexico', 'Turkey', 'France']
+
+app = FastAPI(
+    title="Mental Health Signal API",
+    description="Student Wellness Analytics & Mental Health Score Prediction API",
+    version="1.0.0"
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+# Pydantic Model for Student Input Data
+class StudentData(BaseModel):
+    age                     : int = Field(..., ge=10, le=100)
+    gender                  : Literal['Male', 'Female']
+    country                 : str
+    academic_level          : Literal['Undergraduate', 'Graduate', 'High School']
+    most_used_platform      : Literal['Facebook', 'LinkedIn', 'Instagram', 'Snapchat', 'Twitter', 'YouTube', 'TikTok', 'LINE', 'KakaoTalk', 'VKontakte', 'WhatsApp', 'WeChat']
+    purpose_of_use          : Literal['Networking', 'Education', 'Entertainment', 'News']
+    avg_daily_usage_hours   : float = Field(..., ge=0, le=24)
+    daily_unlocks           : int   = Field(..., ge=0)
+    study_hours             : float = Field(..., ge=0, le=24)
+    physical_activity_hours : float = Field(..., ge=0, le=24)
+    sleep_hours_per_night   : float = Field(..., ge=0, le=24)
+    stress_level            : Literal['Medium', 'Low', 'Very High', 'High']
+
+
+# Pydantic Model for Prediction Output Response
+class PredictionResponse(BaseModel):
+    predicted_mental_health_score: float
+
+
+@app.get('/api/health')
+def health_check():
+    return {"status": "online", "service": "Mental Health Signal API", "version": "1.0.0"}
+
+
+@app.post('/predict', response_model=PredictionResponse)
+def predict(data: StudentData):
+    country_group = data.country if data.country in top_countries else "Other"
+
+    input_row = pd.DataFrame([{
+        'Age'                       : data.age,
+        'Gender'                    : data.gender,
+        'Country'                   : data.country,
+        'Academic_Level'            : data.academic_level,
+        'Most_Used_Platform'        : data.most_used_platform,
+        'Purpose_Of_Use'            : data.purpose_of_use,
+        'Avg_Daily_Usage_Hours'     : data.avg_daily_usage_hours,
+        'Daily_Unlocks'             : data.daily_unlocks,
+        'Study_Hours'               : data.study_hours,
+        'Physical_Activity_Hours'   : data.physical_activity_hours,
+        'Sleep_Hours_Per_Night'     : data.sleep_hours_per_night,
+        'Stress_Level'              : data.stress_level,
+        'Grouped_country'           : country_group
+    }])
+
+    if hasattr(model, "feature_names_in_"):
+        input_row = input_row[list(model.feature_names_in_)]
+
+    prediction = model.predict(input_row)[0]
+    return PredictionResponse(predicted_mental_health_score=round(float(prediction), 2))
+
+
+# Mount current directory to serve index.html, style.css, script.js
+@app.get('/')
+def read_root():
+    return FileResponse('index.html')
+
+# Mount remaining static files (style.css, script.js, assets)
+app.mount("/", StaticFiles(directory=".", html=True), name="static")
+
+if __name__ == '__main__':
+    import uvicorn
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=True)
